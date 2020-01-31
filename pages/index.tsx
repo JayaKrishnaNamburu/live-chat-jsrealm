@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { requestNotifications, sendNotification } from "../utils/helper";
 import { Message } from "../components/message";
 import firebase from "../firebase/firebase";
 import "firebase/firebase-firestore";
@@ -20,6 +21,19 @@ const Home = () => {
       });
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    requestNotifications();
+  }, []);
+
+  useEffect(() => {
+    if (questions.length > 0) {
+      const lastQuestion = questions[questions.length - 1];
+      const elm = document.getElementById(lastQuestion.time);
+      sendNotification(lastQuestion.question);
+      elm.scrollIntoView();
+    }
+  }, [questions]);
 
   function insertNewQuestion() {
     const data = {
@@ -48,12 +62,15 @@ const Home = () => {
             Please ask your questions here, so we can immediatey share with the
             speaker
           </p>
-          <section className="message-area">
+          <section className="message-area" id="message-area">
+            {questions && questions.length === 0 && (
+              <p className="help-text">No questions yet !!</p>
+            )}
             {questions.map((question, index) => (
               <Message
-                key={index}
+                key={`key-${index}`}
                 message={question.question}
-                name={question.name}
+                time={question.time}
               />
             ))}
           </section>
@@ -62,7 +79,7 @@ const Home = () => {
               value={newQuestion}
               onChange={que => questionState(que.target.value)}
               name="question"
-              placeholder="enter new question"
+              placeholder="Please enter your question here"
               className="chat_input"
             />
             <button onClick={insertNewQuestion} className="chat_send">
@@ -102,13 +119,15 @@ const Home = () => {
           }
 
           .chat_input {
-            font-size: 16px;
+            font-size: 14px;
             line-height: 1.2;
             width: auto;
             border-radius: 6px;
             border: 0.5px solid #eee;
             resize: none;
             flex-basis: 80%;
+            padding: 5px;
+            outline: #fac552;
           }
 
           .chat_send {
