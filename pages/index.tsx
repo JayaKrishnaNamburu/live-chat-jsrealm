@@ -22,15 +22,15 @@ const Home = () => {
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    requestNotifications();
-  }, []);
+  // useEffect(() => {
+  //   requestNotifications();
+  // }, []);
 
   useEffect(() => {
     if (questions.length > 0) {
       const lastQuestion = questions[questions.length - 1];
       const elm = document.getElementById(lastQuestion.time);
-      sendNotification(lastQuestion.question);
+      // sendNotification(lastQuestion.question);
       elm.scrollIntoView();
     }
   }, [questions]);
