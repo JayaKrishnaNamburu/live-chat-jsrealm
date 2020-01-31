@@ -1,0 +1,22 @@
+{
+  "name": "live-chat-js-realm",
+  "version": "0.0.0",
+  "description": "A live chat for making remote sessions much smother",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "next": "^9.2.1",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0"
+  },
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "devDependencies": {
+    "@types/node": "^13.5.3",
+    "@types/react": "^16.9.19",
+    "typescript": "^3.7.5"
+  }
+}
