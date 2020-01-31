@@ -50,3 +50,6 @@ export const sendNotification = (message: string) => {
     const notif = new Notification(message);
   }
 };
+
+export const isMobile = () =>
+  /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
