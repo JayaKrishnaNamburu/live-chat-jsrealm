@@ -1,7 +1,37 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Message } from "../components/message";
+import firebase from "../firebase/firebase";
+import "firebase/firebase-firestore";
 
 const Home = () => {
+  const [questions, updateQuestions] = useState([]);
+  const [newQuestion, questionState] = useState("");
+  useEffect(() => {
+    const unsubscribe = firebase
+      .firestore()
+      .collection("jsRealmChat")
+      .orderBy("time", "asc")
+      .onSnapshot((querySnapshot: any) => {
+        const QUESTIONS = [];
+        querySnapshot.forEach(doc => {
+          QUESTIONS.push(doc.data());
+        });
+        updateQuestions(QUESTIONS);
+      });
+    return () => unsubscribe();
+  }, []);
+
+  function insertNewQuestion() {
+    const data = {
+      question: newQuestion,
+      time: Date.now().toString()
+    };
+    firebase
+      .firestore()
+      .collection("jsRealmChat")
+      .add(data);
+    questionState("");
+  }
   return (
     <>
       <section className="wrapper">
@@ -19,58 +49,25 @@ const Home = () => {
             speaker
           </p>
           <section className="message-area">
-            <Message
-              message="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-              name="Jaya Krishna"
-            />
-            <Message
-              message="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-              name="Jaya Krishna"
-            />
-            <Message
-              message="Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry"
-              name="Jaya Krishna"
-            />
-            <Message
-              message="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-              name="Jaya Krishna"
-            />
-            <Message
-              message="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-              name="Jaya Krishna"
-            />
-            <Message
-              message="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-              name="Jaya Krishna"
-            />
-            <Message
-              message="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-              name="Jaya Krishna"
-            />
-            <Message
-              message="Lorem Ipsum is simply dummy text of the printing and typesetting industryLorem Ipsum is simply dummy text of the printing and typesetting industry."
-              name="Jaya Krishna"
-            />
-            <Message
-              message="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-              name="Jaya Krishna"
-            />
-            <Message
-              message="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-              name="Jaya Krishna"
-            />
-            <Message
-              message="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-              name="Jaya Krishna"
-            />
-            <Message
-              message="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry"
-              name="Jaya Krishna"
-            />
+            {questions.map((question, index) => (
+              <Message
+                key={index}
+                message={question.question}
+                name={question.name}
+              />
+            ))}
           </section>
           <div className="chat_box">
-            <textarea name="question" className="chat_input" />
-            <button className="chat_send">SEND</button>
+            <textarea
+              value={newQuestion}
+              onChange={que => questionState(que.target.value)}
+              name="question"
+              placeholder="enter new question"
+              className="chat_input"
+            />
+            <button onClick={insertNewQuestion} className="chat_send">
+              SEND
+            </button>
           </div>
         </section>
       </section>
